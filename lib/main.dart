@@ -28,36 +28,66 @@ class BoltViewer extends StatefulWidget {
 }
 
 class _BoltViewerState extends State<BoltViewer> {
-  FlutterBlueBeacon flutterBlueBeacon = FlutterBlueBeacon.instance;
-
-  Map<String, Bolt> bolts = Map();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(title: Text('Bolt Viewer')),
-      body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('pernos').snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (snapshot.hasError) {
-              return Center(child: Text('Algo anda mal'));
-            }
-            return ListView(
-              children: snapshot.data.docs.map((DocumentSnapshot document) {
-                Bolt perno =
-                    Bolt(document.data()['id'], document.data()['namespaceId']);
-                return BoltCard(perno);
-              }).toList(),
-            );
-          }),
+      body: SingleChildScrollView(
+          child: Column(
+        children: [BluetoothStreamBuilder(), FirebaseStreamBuilder()],
+      )),
     );
+  }
+}
+
+class FirebaseStreamBuilder extends StatelessWidget {
+  const FirebaseStreamBuilder({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('pernos').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Algo anda mal'));
+          }
+          return Column(
+            children: snapshot.data.docs.map((DocumentSnapshot document) {
+              Bolt perno =
+                  Bolt(document.data()['id'], document.data()['namespaceId']);
+              return BoltCard(perno);
+            }).toList(),
+          );
+        });
+  }
+}
+
+class BluetoothStreamBuilder extends StatelessWidget {
+  final FlutterBlueBeacon flutterBlueBeacon = FlutterBlueBeacon.instance;
+
+  final Map<String, Bolt> bolts = Map();
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<Beacon>(
+        stream: flutterBlueBeacon.scan(timeout: Duration(seconds: 20)),
+        builder: (context, snapshot) {
+          Beacon beacon = snapshot.data;
+
+          // compureba condiciones de que se trata de un Perno
+          if (beacon is EddystoneUID) {
+            bolts[beacon.id] = Bolt(beacon.id, beacon.namespaceId);
+          }
+          return Column(
+              children: bolts.values.map((b) => BoltCard(b)).toList());
+        });
   }
 }
 
