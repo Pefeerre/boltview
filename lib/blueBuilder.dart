@@ -1,8 +1,10 @@
 import 'package:bluscan/errorScreen.dart';
+import 'package:bluscan/uploadBolt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_blue_beacon/flutter_blue_beacon.dart';
 import 'bolt.dart';
+import 'boltCard.dart';
 
 class BluetoothStreamBuilder extends StatelessWidget {
   //final FlutterBlue _flutterBlue = FlutterBlue.instance;
@@ -12,7 +14,7 @@ class BluetoothStreamBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Bolt>>(
-        stream: periodicBoltScanner(),
+        stream: periodicBluetoothScanner(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return ErrorScreen(snapshot.error);
@@ -28,7 +30,7 @@ class BluetoothStreamBuilder extends StatelessWidget {
   }
 }
 
-Stream<List<Bolt>> periodicBoltScanner() async* {
+Stream<List<Bolt>> periodicBluetoothScanner() async* {
   final Map<String, Bolt> bolts = Map();
   final FlutterBlueBeacon flutterBlueBeacon = FlutterBlueBeacon.instance;
 
@@ -38,13 +40,12 @@ Stream<List<Bolt>> periodicBoltScanner() async* {
 
       // compureba condiciones de que se trata de un Perno
       if (beacon is EddystoneUID) {
-        bolts[beacon.id] = Bolt(beacon.id, beacon.namespaceId);
+        bolts[beacon.id] = Bolt(beacon.id,
+            medicion: Medicion(
+                namespaceIdToMedicion(beacon.namespaceId), DateTime.now()));
       }
-      // subirPerno() {
-      //if (hay conexion con frbase) {sube el perno}
-      // else{ guarda el perno en sharedpreferences}
-      //}
-      return bolts.values;
+      uploadBolt(bolts[beacon.id]);
+      return bolts.values.toList();
     });
 
     await Future.delayed(Duration(seconds: 40));
