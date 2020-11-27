@@ -71,9 +71,9 @@ class FireBoltCard extends StatelessWidget {
               ),
             );
           }
-          // if (bolt.estado == Estado.PELIGRO) {
-          //   Navigator.pushNamed(context, '/alarm');
-          // }
+          if (bolt.estado == Estado.PELIGRO) {
+            Navigator.pushNamed(context, '/alarm');
+          }
           return Card(
               color: Colors.white,
               child: ListTile(
