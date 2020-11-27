@@ -1,9 +1,9 @@
-import 'package:bluscan/errorScreen.dart';
+import 'package:bluscan/feedback_screens/errorScreen.dart';
 import 'package:bluscan/uploadBolt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_blue_beacon/flutter_blue_beacon.dart';
-import 'bolt.dart';
+import '../bolt.dart';
 import 'boltCard.dart';
 
 class BluetoothStreamBuilder extends StatelessWidget {
@@ -14,7 +14,7 @@ class BluetoothStreamBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Bolt>>(
-        stream: periodicBluetoothScanner(),
+        stream: periodicBluetoothScanner(context),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return ErrorScreen(snapshot.error);
@@ -25,12 +25,12 @@ class BluetoothStreamBuilder extends StatelessWidget {
             );
           }
           return Column(
-              children: snapshot.data.map((b) => BoltCard(b)).toList());
+              children: snapshot.data.map((b) => BlueBoltCard(b)).toList());
         });
   }
 }
 
-Stream<List<Bolt>> periodicBluetoothScanner() async* {
+Stream<List<Bolt>> periodicBluetoothScanner(BuildContext context) async* {
   final Map<String, Bolt> bolts = Map();
   final FlutterBlueBeacon flutterBlueBeacon = FlutterBlueBeacon.instance;
 
@@ -44,8 +44,16 @@ Stream<List<Bolt>> periodicBluetoothScanner() async* {
             medicion: Medicion(
                 namespaceIdToMedicion(beacon.namespaceId), DateTime.now()));
       }
-      uploadBolt(bolts[beacon.id]);
       return bolts.values.toList();
+    });
+
+    bolts.values.forEach((bolt) {
+      //comprueba si hay peligro en algun perno encontrado
+      if (bolt.estado == Estado.PELIGRO) {
+        Navigator.pushNamed(context, '/alarm');
+      }
+      // sube cada perno
+      uploadBolt(bolt);
     });
 
     await Future.delayed(Duration(seconds: 40));

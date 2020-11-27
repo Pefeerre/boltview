@@ -3,7 +3,12 @@ import 'bolt.dart';
 
 uploadBolt(Bolt perno) async {
   CollectionReference pernos = FirebaseFirestore.instance.collection('pernos');
-  pernos.doc(perno.id).set({'id': perno.id, 'nombre': 'Perno'});
+
+  bool boltExist = await pernos.doc(perno.id).get().then((doc) => doc.exists);
+  if (!boltExist) {
+    pernos.doc(perno.id).set({'id': perno.id, 'nombre': 'Perno'});
+  }
+
   pernos
       .doc(perno.id)
       .collection('mediciones')
