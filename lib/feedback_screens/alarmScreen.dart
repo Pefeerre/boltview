@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:vibration/vibration.dart';
 
 class AlarmScreen extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
-    FlutterRingtonePlayer.play(
-      android: AndroidSounds.notification,
-      ios: IosSounds.glass,
-      looping: true, // Android only - API >= 28
-      volume: 0.7, // Android only - API >= 28
-      asAlarm: true, // Android only - all APIs
-    );
-    FlutterRingtonePlayer.playAlarm();
-    //dangerAlarmNotification();
+    dangerAlarmNotification();
     return Scaffold(
         backgroundColor: Colors.redAccent,
         body: Column(
@@ -44,30 +36,23 @@ class AlarmScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(context);
                   FlutterRingtonePlayer.stop();
+                  Vibration.cancel();
                 })
           ],
         ));
   }
 }
 
-//   Future dangerAlarmNotification() async {
-//     const androidPlatformChannelSpecifics = AndroidNotificationDetails(
-//       'alarm_notif',
-//       'alarm_notif',
-//       'Channel 1',
-//       playSound: true,
-//       sound: RawResourceAndroidNotificationSound('alerta_peligro'),
-//       enableVibration: true,
-//       priority: Priority.max,
-//       importance: Importance.max,
-//     );
-//     const NotificationDetails platformChannelSpecifics =
-//         NotificationDetails(android: androidPlatformChannelSpecifics);
-
-//     await flutterLocalNotificationsPlugin.show(
-//       0,
-//       'PELIGRO',
-//       'Exceso de carga en un perno cercano',
-//       platformChannelSpecifics,
-//     );
-//   }
+Future dangerAlarmNotification() async {
+  FlutterRingtonePlayer.play(
+    android: AndroidSounds.ringtone,
+    ios: IosSounds.glass,
+    looping: true, // Android only - API >= 28
+    volume: 0.7, // Android only - API >= 28
+    asAlarm: true, // Android only - all APIs
+  );
+  FlutterRingtonePlayer.playRingtone();
+  if (await Vibration.hasVibrator()) {
+    Vibration.vibrate(pattern: [500, 1000, 500, 2000, 500, 3000, 500, 500]);
+  }
+}
