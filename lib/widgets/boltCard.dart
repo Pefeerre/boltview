@@ -34,9 +34,17 @@ class BlueBoltCard extends StatelessWidget {
     return Card(
         color: Colors.white,
         child: ListTile(
-          title: Text(bolt.name),
+          title: Row(
+            children: [
+              Text(bolt.name),
+              Text(
+                ' - ${bolt.medicion.bateria.toString()}%',
+                style: TextStyle(color: Colors.grey),
+              )
+            ],
+          ),
           subtitle: Text(
-              '${bolt.id}\n${bolt.medicion.medicion}\nultimavez actualizado: ${fechaLinda(bolt.medicion.fecha)}'),
+              '${bolt.id}\n${bolt.medicion.medicion}\nultima vez actualizado: ${fechaLinda(bolt.medicion.fecha)}'),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -71,15 +79,20 @@ class FireBoltCard extends StatelessWidget {
               ),
             );
           }
-          if (bolt.estado == Estado.PELIGRO) {
-            Navigator.pushNamed(context, '/alarm');
-          }
           return Card(
               color: Colors.white,
               child: ListTile(
-                title: Text(bolt.name),
+                title: Row(
+                  children: [
+                    Text(bolt.name),
+                    Text(
+                      ' - ${bolt.medicion.bateria.toString()}%',
+                      style: TextStyle(color: Colors.grey),
+                    )
+                  ],
+                ),
                 subtitle: Text(
-                    'ultimavez actualizado: ${fechaLinda(bolt.medicion.fecha)}'),
+                    'ultima vez actualizado: ${fechaLinda(bolt.medicion.fecha)}'),
                 trailing: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

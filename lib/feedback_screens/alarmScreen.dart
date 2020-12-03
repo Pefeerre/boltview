@@ -23,7 +23,7 @@ class AlarmScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Text(
-                'se ha detectado un nivel de carga peligroso en un perno cercano',
+                'Se ha detectado un nivel de carga peligroso en un perno cercano',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white, fontSize: 15.0),
               ),

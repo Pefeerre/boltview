@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'bolt.dart';
 
 StreamController<List<Bolt>> boltsFirebaseCtrl =
     StreamController<List<Bolt>>.broadcast();
+
+Map<String, Bolt> fireBolts = Map<String, Bolt>();
 
 void addBoltsFromFirebase() async {
   CollectionReference boltCollection =
@@ -15,8 +16,10 @@ void addBoltsFromFirebase() async {
   boltCollection.snapshots().listen((pernos) {
     pernos.docs.forEach((boltDoc) {
       String boltId = boltDoc.data()['id'];
-      bolts[boltId] = Bolt(boltId);
+      String boltName = boltDoc.data()['nombre'];
+      bolts[boltId] = Bolt(boltId, boltName);
       boltsFirebaseCtrl.add(bolts.values.toList());
+      fireBolts = bolts;
     });
   });
 }
@@ -31,8 +34,10 @@ Stream<Medicion> ultimaMedicionFromFirebase(Bolt bolt) async* {
       .snapshots()
       .map((event) {
     Map<String, dynamic> ultimaMedicionMap = event.docs[0].data();
-    Medicion ultimaMedicion = Medicion(ultimaMedicionMap['medicion'],
-        (ultimaMedicionMap['fecha'] as Timestamp).toDate());
+    Medicion ultimaMedicion = Medicion(
+        ultimaMedicionMap['medicion'],
+        (ultimaMedicionMap['fecha'] as Timestamp).toDate(),
+        ultimaMedicionMap['bateria']);
     bolt.medicion = ultimaMedicion;
     return ultimaMedicion;
   });

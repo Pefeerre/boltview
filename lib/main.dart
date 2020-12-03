@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'feedback_screens/alarmScreen.dart';
 import 'mainScreen.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +13,6 @@ class BoltViewer extends StatefulWidget {
 }
 
 class _BoltViewerState extends State<BoltViewer> {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(routes: {

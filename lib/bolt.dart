@@ -20,13 +20,14 @@ class Bolt {
     return Estado.PRECAUCION;
   }
 
-  Bolt(this.id, {this.medicion});
+  Bolt(this.id, this.name, {this.medicion});
 }
 
 class Medicion {
   int medicion;
   DateTime fecha;
-  Medicion(this.medicion, this.fecha);
+  int bateria;
+  Medicion(this.medicion, this.fecha, this.bateria);
 }
 
 int namespaceIdToMedicion(String namespaceId) {
@@ -36,4 +37,10 @@ int namespaceIdToMedicion(String namespaceId) {
     debugPrint(e.toString());
     return 0;
   }
+}
+
+int namespaceIdToBateria(String namespaceId) {
+  double porcentajedouble =
+      int.parse(namespaceId.substring(11, 20), radix: 16) / 10995116277.75;
+  return porcentajedouble.round();
 }

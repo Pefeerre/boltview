@@ -13,6 +13,9 @@ uploadBolt(Bolt perno) async {
       .doc(perno.id)
       .collection('mediciones')
       .doc(perno.medicion.fecha.toString().substring(0, 16))
-      .set(
-          {'medicion': perno.medicion.medicion, 'fecha': perno.medicion.fecha});
+      .set({
+    'medicion': perno.medicion.medicion,
+    'fecha': perno.medicion.fecha,
+    'bateria': perno.medicion.bateria
+  });
 }
