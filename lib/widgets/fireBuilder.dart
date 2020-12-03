@@ -6,7 +6,7 @@ import 'boltCard.dart';
 import '../feedback_screens/errorScreen.dart';
 import '../firebaseBoltStream.dart';
 
-class FirebaseBaseBolts extends StatelessWidget {
+class FirebaseBolts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(

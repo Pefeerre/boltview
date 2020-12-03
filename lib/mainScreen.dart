@@ -32,7 +32,7 @@ class _MainScreenBoltListState extends State<MainScreenBoltList> {
               width: MediaQuery.of(context).size.width,
               color: Colors.grey,
               child: Text('Pernos en base de datos')),
-          FirebaseBaseBolts()
+          FirebaseBolts()
         ],
       )),
     );
