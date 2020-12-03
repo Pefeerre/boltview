@@ -11,7 +11,7 @@ debe ser apagada manualmente. La aplicación también tiene la funcionalidad de 
 última medición subida) de la base de datos mencionada antes de hacer cualquier medición, los que se muestran en una  
 lista bajo la lista de pernos encontrados por Bluetooth.
 
-## Lista de Archivos
+## Archivos
 
 ### main.dart
 
